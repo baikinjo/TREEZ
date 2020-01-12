@@ -9,6 +9,7 @@ import SignInPage from './pages/signin/signin'
 import OrderPage from './pages/order/order'
 import CheckoutPage from './pages/checkout/checkout'
 import SignIn from './components/signin/signin.component'
+import NotFound from './components/notfound/not.found'
 import { Container, Segment } from 'semantic-ui-react'
 import UserContext from './contexts/user.context'
 
@@ -82,6 +83,7 @@ const App = () => {
               )
             }
           />
+          <Route path='*' component={NotFound} />
         </Switch>
       </Container>
     </>
