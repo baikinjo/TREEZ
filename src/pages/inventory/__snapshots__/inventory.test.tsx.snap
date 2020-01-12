@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Inventory Page should render the InventoryPage component 1`] = `ShallowWrapper {}`;
