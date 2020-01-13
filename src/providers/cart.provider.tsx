@@ -93,7 +93,6 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateInventory = (list: CART_ITEM_TYPE[]) => {
     const items = inventory[0].items.filter(i => list.find(l => i.id === l.id))
-    console.log(items)
   }
 
   let total = 0

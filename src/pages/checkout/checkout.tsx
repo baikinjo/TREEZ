@@ -30,7 +30,6 @@ const CheckoutPage = ({ currentUser }: { currentUser: USER_TYPE }) => {
 
   return (
     <div style={{ width: '80%' }}>
-      <Button onClick={() => updateInventory(cartItems)}>Test</Button>
       <div style={{ minHeight: 500 }}>
         <Header as='h2'>Your Orders</Header>
         {!cartItems.length ? (
