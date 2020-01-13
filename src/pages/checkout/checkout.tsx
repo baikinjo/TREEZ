@@ -24,6 +24,7 @@ const CheckoutPage = ({ currentUser }: { currentUser: USER_TYPE }) => {
     await userRef.update({
       orders: firebase.firestore.FieldValue.arrayUnion(order)
     })
+    updateInventory(cartItems, 'submit')
     clearCart()
     $confirm(true)
   }

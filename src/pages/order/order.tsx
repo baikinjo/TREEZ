@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { USER_TYPE } from '../../utils/types'
+import { USER_TYPE, ORDER_TYPE } from '../../utils/types'
 import { Header } from 'semantic-ui-react'
 import { firestore } from '../../utils/firebase.utils'
 import OrderStatusTable from '../../components/order/order.table.component'
 
 const OrderPage = ({ currentUser }: { currentUser: USER_TYPE }) => {
-  const [orders, $orders] = useState<any>([])
+  const [orders, $orders] = useState<ORDER_TYPE[]>([])
   useEffect(() => {
     let unsubscribeFromSnapshot: any = null
     const userRef = firestore.collection('users').doc(currentUser.id)
@@ -17,8 +17,6 @@ const OrderPage = ({ currentUser }: { currentUser: USER_TYPE }) => {
       unsubscribeFromSnapshot()
     }
   }, [currentUser.id])
-
-  console.log(orders)
 
   return (
     <div style={{ width: '80%' }}>

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { CART_ITEM_TYPE, INVENTORY_TYPE } from '../utils/types'
+import { firestore } from '../utils/firebase.utils'
 
 interface CartContextInterface {
   cartItems: CART_ITEM_TYPE[]
@@ -14,7 +15,7 @@ interface CartContextInterface {
   subtotal: number
   inventory: INVENTORY_TYPE
   setInventory: (list: any) => void
-  updateInventory: (list: CART_ITEM_TYPE[]) => void
+  updateInventory: (list: CART_ITEM_TYPE[], type: string | undefined) => void
 }
 
 export const CartContext = createContext<CartContextInterface>({
@@ -30,7 +31,7 @@ export const CartContext = createContext<CartContextInterface>({
   subtotal: 0,
   inventory: [],
   setInventory: (list: any) => {},
-  updateInventory: (list: CART_ITEM_TYPE[]) => {}
+  updateInventory: (list: CART_ITEM_TYPE[], type: string | undefined) => {}
 })
 
 const CartProvider = ({ children }: { children: React.ReactNode }) => {
@@ -91,8 +92,29 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
     return $cartItems([])
   }
 
-  const updateInventory = (list: CART_ITEM_TYPE[]) => {
-    const items = inventory[0].items.filter(i => list.find(l => i.id === l.id))
+  const updateInventory = async (
+    list: CART_ITEM_TYPE[],
+    type: string | undefined
+  ) => {
+    let newInventory = inventory[0].items
+
+    newInventory.forEach(item => {
+      var matched = list.filter((l: CART_ITEM_TYPE) => l.id === item.id)[0]
+      if (matched) {
+        if (type === 'submit') {
+          item.quantity = Number(item.quantity) - Number(matched.quantity)
+        } else {
+          item.quantity = Number(item.quantity) + Number(matched.quantity)
+        }
+      }
+    })
+
+    const inventoryRef = firestore
+      .collection('inventory')
+      .doc('SHu2n7mZt8DZGEc57SIG')
+    await inventoryRef.update({
+      items: newInventory
+    })
   }
 
   let total = 0

@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import './App.css'
-import { Route, Switch, Redirect } from 'react-router-dom'
-import { GlobalStyle } from './styles/global.styles'
-import Header from './components/header/header.component'
-import HomePage from './pages/homepage/homepage'
-import InventoryPage from './pages/inventory/inventory'
-import SignInPage from './pages/signin/signin'
-import OrderPage from './pages/order/order'
-import CheckoutPage from './pages/checkout/checkout'
-import SignIn from './components/signin/signin.component'
-import NotFound from './components/notfound/not.found'
-import { Container, Segment } from 'semantic-ui-react'
-import UserContext from './contexts/user.context'
+import React, { useState, useEffect, useContext } from 'react'
 
-import { auth, createUserProfileDocument } from './utils/firebase.utils'
+import { GlobalStyle } from './styles/global.styles'
+import MyRouter from './router'
+
+import {
+  auth,
+  createUserProfileDocument,
+  firestore,
+  convertSnapshotToMap
+} from './utils/firebase.utils'
+import { CartContext } from './providers/cart.provider'
 
 const App = () => {
   const [currentUser, $currentUser] = useState<any>(null)
+  const { setInventory } = useContext(CartContext)
 
   useEffect(() => {
     let unsubscribeFromAuth: any = null
@@ -38,54 +35,23 @@ const App = () => {
     }
   }, [])
 
+  useEffect(() => {
+    let unsubscribeFromSnapshot: any = null
+    const collectionRef = firestore.collection('inventory')
+    unsubscribeFromSnapshot = collectionRef.onSnapshot(async snapshot => {
+      const list = convertSnapshotToMap(snapshot)
+      setInventory(list)
+    })
+
+    return () => {
+      unsubscribeFromSnapshot()
+    }
+  }, [setInventory])
+
   return (
     <>
       <GlobalStyle />
-      <UserContext.Provider value={currentUser}>
-        <Header />
-      </UserContext.Provider>
-      <Container
-        style={{
-          paddingTop: '4em',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh'
-        }}
-      >
-        <Switch>
-          <Route exact path='/' component={HomePage} />
-          <Route path='/inventory' component={InventoryPage} />
-          <Route
-            path='/orders'
-            render={() =>
-              currentUser ? (
-                <OrderPage currentUser={currentUser} />
-              ) : (
-                <Segment placeholder padded='very'>
-                  <SignIn />
-                </Segment>
-              )
-            }
-          />
-          <Route
-            exact
-            path='/signin'
-            render={() => (currentUser ? <Redirect to='/' /> : <SignInPage />)}
-          />
-          <Route
-            path='/checkout'
-            render={() =>
-              currentUser ? (
-                <CheckoutPage currentUser={currentUser} />
-              ) : (
-                <SignInPage />
-              )
-            }
-          />
-          <Route path='*' component={NotFound} />
-        </Switch>
-      </Container>
+      <MyRouter currentUser={currentUser} />
     </>
   )
 }

@@ -7,7 +7,7 @@ export type INVENTORY_TYPE = {
     description: string
     name: string
     price: string
-    quantity: string
+    quantity: string | number
   }[]
 }[]
 
@@ -20,7 +20,7 @@ export type ITEM_TYPE = {
     description: string
     name: string
     price: string
-    quantity: string
+    quantity: string | number
   }[]
 }
 
@@ -43,4 +43,10 @@ export type USER_TYPE = {
     quantity: number
     orderAt: Date
   }[]
+}
+
+export type ORDER_TYPE = {
+  cartItems: CART_ITEM_TYPE[]
+  createdAt: Date
+  subtotal: number
 }

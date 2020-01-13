@@ -1,21 +1,25 @@
-import React from 'react'
-import { Table, Modal, Icon } from 'semantic-ui-react'
+import React, { useContext } from 'react'
+import { Table, Modal, Icon, Header } from 'semantic-ui-react'
 import { convertTimestamp } from '../../utils/time.conversion'
-import { USER_TYPE } from '../../utils/types'
+import { USER_TYPE, ORDER_TYPE } from '../../utils/types'
 import { firestore } from '../../utils/firebase.utils'
+import { CartContext } from '../../providers/cart.provider'
 
 const OrderStatusTable = ({
   orders,
   currentUser
 }: {
-  orders: any
+  orders: ORDER_TYPE[]
   currentUser: USER_TYPE
 }) => {
+  const { updateInventory } = useContext(CartContext)
+
   const deleteOrder = async (item: any) => {
     const userRef = firestore.collection('users').doc(currentUser.id)
     await userRef.update({
       orders: orders.filter((order: any) => order.createdAt !== item.createdAt)
     })
+    updateInventory(item, undefined)
   }
 
   return (
@@ -31,7 +35,7 @@ const OrderStatusTable = ({
           </Table.Row>
         </Table.Header>
         {orders &&
-          orders.map((item: any, index: number) => {
+          orders.map((item, index: number) => {
             const time = convertTimestamp(item.createdAt)
             return (
               <Table.Body key={index}>
@@ -48,6 +52,9 @@ const OrderStatusTable = ({
                       size='small'
                     >
                       <>
+                        <Header as='h3' textAlign='center'>
+                          Item List
+                        </Header>
                         <Table textAlign='center'>
                           <Table.Header>
                             <Table.Row>
@@ -56,12 +63,12 @@ const OrderStatusTable = ({
                               <Table.HeaderCell>Quantity</Table.HeaderCell>
                             </Table.Row>
                           </Table.Header>
-                          {item.cartItems.map((i: any, index: number) => (
+                          {item.cartItems.map((i, index: number) => (
                             <Table.Body key={index}>
                               <Table.Row>
                                 <Table.Cell>{i.name}</Table.Cell>
-                                <Table.Cell>{i.price}</Table.Cell>
-                                <Table.Cell>${i.quantity}</Table.Cell>
+                                <Table.Cell>${i.price}</Table.Cell>
+                                <Table.Cell>{i.quantity}</Table.Cell>
                               </Table.Row>
                             </Table.Body>
                           ))}
@@ -71,7 +78,7 @@ const OrderStatusTable = ({
                   </Table.Cell>
                   <Table.Cell>
                     <Icon
-                      onClick={() => deleteOrder(item)}
+                      onClick={() => deleteOrder(item.cartItems)}
                       name='delete'
                       color='red'
                     />
