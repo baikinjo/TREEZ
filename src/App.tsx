@@ -13,7 +13,7 @@ import { CartContext } from './providers/cart.provider'
 
 const App = () => {
   const [currentUser, $currentUser] = useState<any>(null)
-  const { setInventory } = useContext(CartContext)
+  const { setInventory, clearCart } = useContext(CartContext)
 
   useEffect(() => {
     let unsubscribeFromAuth: any = null
@@ -46,7 +46,7 @@ const App = () => {
     return () => {
       unsubscribeFromSnapshot()
     }
-  }, [setInventory])
+  }, [setInventory, clearCart])
 
   return (
     <>
