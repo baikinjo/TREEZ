@@ -15,11 +15,12 @@ const OrderStatusTable = ({
   const { updateInventory } = useContext(CartContext)
 
   const deleteOrder = async (item: any) => {
+    const cartItems = item.cartItems
     const userRef = firestore.collection('users').doc(currentUser.id)
     await userRef.update({
       orders: orders.filter((order: any) => order.createdAt !== item.createdAt)
     })
-    updateInventory(item, undefined)
+    updateInventory(cartItems, undefined)
   }
 
   return (
@@ -78,7 +79,7 @@ const OrderStatusTable = ({
                   </Table.Cell>
                   <Table.Cell>
                     <Icon
-                      onClick={() => deleteOrder(item.cartItems)}
+                      onClick={() => deleteOrder(item)}
                       name='delete'
                       color='red'
                     />
