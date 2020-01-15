@@ -36,46 +36,68 @@ const InventoryCard = ({ inventory }: { inventory: ITEM_TYPE }) => {
         <>
           <h2 style={{ marginBottom: 48 }}>{inventory.title.toUpperCase()}</h2>
           <Card.Group itemsPerRow={3}>
-            {inventory.items.map((item: any) => (
-              <Card key={item.id}>
-                <Card.Content>
-                  <Card.Header textAlign='center'>{item.name}</Card.Header>
-                  <Card.Meta textAlign='center'>
-                    stock: {item.quantity} | ${item.price} CAD
-                  </Card.Meta>
-                </Card.Content>
-                <Card.Content extra>
-                  <div className='ui two buttons'>
-                    <Button onClick={() => onSelect(item)} color='black'>
-                      View
-                    </Button>
-                    <Button onClick={() => onQuickAdd(item)} color='teal'>
-                      Quick Add
-                    </Button>
+            {inventory.items.map((item: CART_ITEM_TYPE) => {
+              const soldout = Number(item.quantity) === 0
+              return (
+                <Card key={item.id}>
+                  <Card.Content>
+                    <Card.Header textAlign='center'>{item.name}</Card.Header>
+                    <Card.Meta textAlign='center'>
+                      stock: {item.quantity} | ${item.price} CAD
+                    </Card.Meta>
+                  </Card.Content>
+                  <Card.Content extra>
+                    <div className='ui two buttons'>
+                      <Button
+                        disabled={soldout}
+                        onClick={() => onSelect(item)}
+                        color='black'
+                      >
+                        View
+                      </Button>
+                      <Button
+                        disabled={soldout}
+                        onClick={() => onQuickAdd(item)}
+                        color='teal'
+                      >
+                        Quick Add
+                      </Button>
 
-                    <Modal size='mini' open={modal} onClose={onClose} closeIcon>
-                      <Modal.Header>{selected.name}</Modal.Header>
-                      <Modal.Content>
-                        <Modal.Description>
-                          {selected.description}
-                          <p>
-                            stock: {selected.quantity} | ${selected.price}
-                          </p>
-                        </Modal.Description>
-                      </Modal.Content>
-                      <Modal.Actions>
-                        <Button
-                          color='teal'
-                          onClick={() => onQuickAdd(selected)}
-                        >
-                          Add Item
-                        </Button>
-                      </Modal.Actions>
-                    </Modal>
-                  </div>
-                </Card.Content>
-              </Card>
-            ))}
+                      <Modal
+                        size='mini'
+                        open={modal}
+                        onClose={onClose}
+                        closeIcon
+                      >
+                        <Modal.Header>{selected.name}</Modal.Header>
+                        <Modal.Content>
+                          <Modal.Description>
+                            {selected.description}
+                            <p>
+                              stock:{' '}
+                              {soldout ? (
+                                <span style={{ color: 'red' }}>sold out</span>
+                              ) : (
+                                selected.quantity
+                              )}{' '}
+                              | ${selected.price}
+                            </p>
+                          </Modal.Description>
+                        </Modal.Content>
+                        <Modal.Actions>
+                          <Button
+                            color='teal'
+                            onClick={() => onQuickAdd(selected)}
+                          >
+                            Add Item
+                          </Button>
+                        </Modal.Actions>
+                      </Modal>
+                    </div>
+                  </Card.Content>
+                </Card>
+              )
+            })}
           </Card.Group>
         </>
       ) : (
