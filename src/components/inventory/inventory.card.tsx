@@ -43,7 +43,12 @@ const InventoryCard = ({ inventory }: { inventory: ITEM_TYPE }) => {
                   <Card.Content>
                     <Card.Header textAlign='center'>{item.name}</Card.Header>
                     <Card.Meta textAlign='center'>
-                      stock: {item.quantity} | ${item.price} CAD
+                      {soldout ? (
+                        <span style={{ color: 'red' }}>sold out</span>
+                      ) : (
+                        `stock: ${item.quantity}`
+                      )}{' '}
+                      | ${item.price} CAD
                     </Card.Meta>
                   </Card.Content>
                   <Card.Content extra>
@@ -74,11 +79,10 @@ const InventoryCard = ({ inventory }: { inventory: ITEM_TYPE }) => {
                           <Modal.Description>
                             {selected.description}
                             <p>
-                              stock:{' '}
                               {soldout ? (
                                 <span style={{ color: 'red' }}>sold out</span>
                               ) : (
-                                selected.quantity
+                                `stock: ${selected.quantity}`
                               )}{' '}
                               | ${selected.price}
                             </p>
